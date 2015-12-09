@@ -9,10 +9,8 @@ import com.activeandroid.annotation.Table;
  */
 @Table(name = "users")
 public class TwitterUser extends Model {
-    @Column(index = true)
     long id;
 
-    @Column(index = true)
     String screenName;
 
     String name;

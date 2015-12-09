@@ -1,14 +1,14 @@
 package com.codepath.apps.motwitter.networking;
 
-import org.scribe.builder.api.Api;
-import org.scribe.builder.api.TwitterApi;
-
 import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
+import org.scribe.builder.api.Api;
+import org.scribe.builder.api.TwitterApi;
 
 /*
  * 
@@ -24,7 +24,7 @@ import com.loopj.android.http.RequestParams;
  */
 public class TwitterClient extends OAuthBaseClient {
 	public static final Class<? extends Api> REST_API_CLASS = TwitterApi.class; // Change this
-	public static final String REST_URL = "http://api.twitter.com/1.1"; // Change this, base API URL
+	public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
 	public static final String REST_CONSUMER_KEY = "bHuaIUA3KTeba1IAUR5ur9IWO";       // Change this
 	public static final String REST_CONSUMER_SECRET = "MUqUF7zlGLgwbZ6218qcL2q2pnULnwuGvqovVlEcl4WAMAwalZ"; // Change this
 	public static final String REST_CALLBACK_URL = "oauth://codepathtweets"; // Change this (here and in manifest)
@@ -39,18 +39,30 @@ public class TwitterClient extends OAuthBaseClient {
 		);
 	}
 
+    public String getToken() {
+        return getRequestToken().toString();
+    }
+
+    public void getHomeTimeline(AsyncHttpClient pClient, RequestParams params, JsonHttpResponseHandler handler) {
+		pClient.get(getHomeTimelineUrl(), params, handler);
+    }
+
+    public void getHomeTimelineSince(AsyncHttpClient pClient, String since_id, RequestParams params,
+            JsonHttpResponseHandler handler) {
+
+        params.add("since_id", since_id);
+        pClient.get(getHomeTimelineUrl(), params, handler);
+    }
+
+    public void getHomeTimeline(JsonHttpResponseHandler handler) {
+        getHomeTimeline(getClient(), null, handler);
+    }
+
 	public String getHomeTimelineUrl() {
 		return getApiUrl("statuses/home_timeline.json");
 	}
 
-	public void getHomeTimeline(JsonHttpResponseHandler handler) {
-		getClient().get(getHomeTimelineUrl(), handler);
-	}
-
-	public void getHomeTimelineSince(int since_id, JsonHttpResponseHandler handler) {
-		getClient().get(getHomeTimelineUrl(),
-				new RequestParams("since_id", since_id),
-				handler
-		);
+	public void getHomeTimelineSince(String since_id, JsonHttpResponseHandler handler) {
+        getHomeTimelineSince(getClient(), since_id, new RequestParams(), handler);
 	}
 }
