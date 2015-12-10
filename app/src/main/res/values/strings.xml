@@ -4,6 +4,6 @@
     <string name="app_name">Mo Twitter</string>
     <string name="login_label">Log in</string>
     <string name="title_activity_timeline">Home Timeline</string>
-    <string name="title_activity_home">HomeActivity</string>
-
+    <string name="title_activity_home">Moc Twitter</string>
+    <string name="compose_tweet_prompt">What\'s happening?</string>
 </resources>

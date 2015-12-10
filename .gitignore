@@ -63,3 +63,5 @@ local.properties
 .idea
 build
 import-summary.txt
+
+secret.xml
