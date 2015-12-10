@@ -47,22 +47,15 @@ public class TwitterClient extends OAuthBaseClient {
 		pClient.get(getHomeTimelineUrl(), params, handler);
     }
 
-    public void getHomeTimelineSince(AsyncHttpClient pClient, String since_id, RequestParams params,
-            JsonHttpResponseHandler handler) {
-
-        params.add("since_id", since_id);
-        pClient.get(getHomeTimelineUrl(), params, handler);
-    }
-
     public void getHomeTimeline(JsonHttpResponseHandler handler) {
         getHomeTimeline(getClient(), null, handler);
     }
 
+    public void getHomeTimeline(int page, JsonHttpResponseHandler handler) {
+        getClient().get(getHomeTimelineUrl(), new RequestParams("page", page), handler);
+    }
+
 	public String getHomeTimelineUrl() {
 		return getApiUrl("statuses/home_timeline.json");
-	}
-
-	public void getHomeTimelineSince(String since_id, JsonHttpResponseHandler handler) {
-        getHomeTimelineSince(getClient(), since_id, new RequestParams(), handler);
 	}
 }

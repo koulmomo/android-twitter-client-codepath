@@ -17,6 +17,7 @@ import com.codepath.apps.motwitter.MoTwitterApplication;
 import com.codepath.apps.motwitter.R;
 import com.codepath.apps.motwitter.adapters.TimelineAdapter;
 import com.codepath.apps.motwitter.helpers.Utils;
+import com.codepath.apps.motwitter.listeners.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.motwitter.models.Tweet;
 import com.codepath.apps.motwitter.services.FetchHomeFeedService;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -65,7 +66,16 @@ public class HomeActivity extends AppCompatActivity {
 
         mTimelineAdapter = new TimelineAdapter(this, mTweets);
         mTimelineRV.setAdapter(mTimelineAdapter);
-        mTimelineRV.setLayoutManager(new LinearLayoutManager(this));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mTimelineRV.setLayoutManager(layoutManager);
+
+        mTimelineRV.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                fetchMoreHomeContent(page);
+            }
+        });
 
         // TODO: switch to using an intent service to fetch data
         // setUpBroadcastReceiver();
@@ -73,26 +83,30 @@ public class HomeActivity extends AppCompatActivity {
         fetchHomeFeed();
     }
 
-    void fetchHomeFeed() {
-        fetchHomeFeed(null);
+    void fetchMoreHomeContent(int page) {
+        MoTwitterApplication.getRestClient().getHomeTimeline(page, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                super.onSuccess(statusCode, headers, response);
+
+                mTweets.addAll(Tweet.fromJSON(response));
+                mTimelineAdapter.notifyItemRangeInserted(mTimelineAdapter.getItemCount(), mTweets.size() - 1);
+
+            }
+        });
     }
 
-    void fetchHomeFeed(String since_id) {
-
-        if (TextUtils.isEmpty(since_id)) {
-            MoTwitterApplication.getRestClient().getHomeTimeline(new JsonHttpResponseHandler() {
+    void fetchHomeFeed() {
+        MoTwitterApplication.getRestClient().getHomeTimeline(new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    // Utils.showShortToast(HomeActivity.this, response.toString());
+                // Utils.showShortToast(HomeActivity.this, response.toString());
                     mTweets.clear();
                     mTweets.addAll(Tweet.fromJSON(response));
                     mTimelineAdapter.notifyDataSetChanged();
                     super.onSuccess(statusCode, headers, response);
-
                 }
             });
-            return;
-        }
     }
 
     public void launchComposeTweetView(View view) {

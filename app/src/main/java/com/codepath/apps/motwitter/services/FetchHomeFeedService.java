@@ -52,12 +52,12 @@ public class FetchHomeFeedService extends AbstractMoService {
             return;
         }
 
-        getTwitterClient().getHomeTimelineSince(mClient, since_id, createBaseParams(),
-                new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                        super.onSuccess(statusCode, headers, response);
-                    }
-                });
+//        getTwitterClient().getHomeTimelineSince(mClient, since_id, createBaseParams(),
+//                new JsonHttpResponseHandler() {
+//                    @Override
+//                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+//                        super.onSuccess(statusCode, headers, response);
+//                    }
+//                });
     }
 }
