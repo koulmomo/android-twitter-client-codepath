@@ -27,6 +27,7 @@
 
         <ImageButton
             android:scaleType="fitXY"
+            android:clickable="true"
             android:layout_centerHorizontal="true"
             android:minWidth="23dp"
             android:onClick="clear"
@@ -41,14 +42,15 @@
 
     <EditText
         android:id="@+id/etTweetInput"
-        android:inputType="textLongMessage"
+        android:inputType="textMultiLine"
         android:hint="@string/compose_tweet_prompt"
         android:textColorHint="@color/secondary_text"
         android:gravity="top"
         android:layout_gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="90"/>
+        android:layout_weight="90"
+        android:scrollHorizontally="false"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -57,6 +59,7 @@
 
         <TextView
             android:id="@+id/tvCharactersLeft"
+            android:text="140"
             android:layout_centerVertical="true"
             android:textColor="@color/secondary_text"
             android:layout_toLeftOf="@+id/btnTweet"
@@ -65,6 +68,8 @@
 
         <Button
             android:id="@+id/btnTweet"
+            android:clickable="true"
+            android:layout_marginLeft="5dp"
             android:layout_centerVertical="true"
             android:onClick="tweet"
             android:layout_width="wrap_content"

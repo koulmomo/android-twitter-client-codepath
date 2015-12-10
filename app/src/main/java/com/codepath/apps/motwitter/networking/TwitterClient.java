@@ -54,6 +54,14 @@ public class TwitterClient extends OAuthBaseClient {
         getClient().get(getHomeTimelineUrl(), new RequestParams("page", page), handler);
     }
 
+    public void getCurrentUser(JsonHttpResponseHandler handler) {
+        getClient().get(getApiUrl("account/verify_credentials.json"), handler);
+    }
+
+    public void postNewTweet(String tweet, JsonHttpResponseHandler handler) {
+        getClient().post(getApiUrl("statuses/update.json"), new RequestParams("status", tweet), handler);
+    }
+
 	public String getHomeTimelineUrl() {
 		return getApiUrl("statuses/home_timeline.json");
 	}

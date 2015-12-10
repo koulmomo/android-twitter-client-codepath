@@ -1,25 +1,19 @@
 package com.codepath.apps.motwitter.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.codepath.apps.motwitter.MoTwitterApplication;
 import com.codepath.apps.motwitter.R;
 import com.codepath.apps.motwitter.adapters.TimelineAdapter;
-import com.codepath.apps.motwitter.helpers.Utils;
 import com.codepath.apps.motwitter.listeners.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.motwitter.models.Tweet;
-import com.codepath.apps.motwitter.services.FetchHomeFeedService;
+import com.codepath.apps.motwitter.models.TwitterUser;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -28,13 +22,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private static final int REQUEST_CODE = 100;
+    private static final int COMPOSE_TWEET_REQUEST_CODE = 100;
 
 //    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 //        @Override
@@ -83,6 +78,45 @@ public class HomeActivity extends AppCompatActivity {
         fetchHomeFeed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case COMPOSE_TWEET_REQUEST_CODE:
+                handleComposeTweetResult(resultCode, data);
+                return;
+        }
+    }
+
+    private void handleComposeTweetResult(int resultCode, Intent data) {
+        switch (resultCode) {
+            case RESULT_OK:
+                Tweet newTweet = new Tweet();
+                newTweet.text = data.getStringExtra("tweetText");
+                newTweet.user = (TwitterUser) data.getSerializableExtra("user");
+
+                postNewTweet(newTweet);
+                return;
+
+        }
+    }
+
+    protected void postNewTweet(final Tweet newTweet) {
+        // optimistic update
+        mTweets.add(0, newTweet);
+        mTimelineAdapter.notifyItemInserted(0);
+        mTimelineRV.smoothScrollToPosition(0);
+
+        MoTwitterApplication.getRestClient().postNewTweet(newTweet.text, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                int previousTweetIndex = mTweets.indexOf(newTweet);
+                mTweets.set(previousTweetIndex, Tweet.fromJSON(response));
+                mTimelineAdapter.notifyItemChanged(previousTweetIndex);
+            }
+        });
+    }
+
     void fetchMoreHomeContent(int page) {
         MoTwitterApplication.getRestClient().getHomeTimeline(page, new JsonHttpResponseHandler() {
             @Override
@@ -110,6 +144,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void launchComposeTweetView(View view) {
-        startActivityForResult(new Intent(HomeActivity.this, ComposeTweetActivity.class), REQUEST_CODE);
+        startActivityForResult(new Intent(HomeActivity.this, ComposeTweetActivity.class), COMPOSE_TWEET_REQUEST_CODE);
     }
 }

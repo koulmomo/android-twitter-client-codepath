@@ -1,5 +1,7 @@
 package com.codepath.apps.motwitter.models;
 
+import android.text.TextUtils;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -11,12 +13,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by koulmomo on 12/7/15.
  */
 public class Tweet extends Model {
     public long id;
+
+    public String mClientId;
 
     public String text;
 
@@ -46,6 +51,10 @@ public class Tweet extends Model {
         }
     }
 
+    public Tweet() {
+        mClientId = "MoTwitterApp:" + UUID.randomUUID();
+    }
+
     public static Tweet fromJSON(JSONObject json) {
         return new Tweet(json);
     }
@@ -65,6 +74,9 @@ public class Tweet extends Model {
     }
 
     public String getRelativeCreatedAt() {
+        if (TextUtils.isEmpty(createdAt)) {
+            return "now";
+        }
         return Utils.getRelativeTimeAgo(createdAt);
     }
 }

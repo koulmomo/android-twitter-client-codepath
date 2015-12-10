@@ -7,10 +7,12 @@ import com.activeandroid.annotation.Table;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by koulmomo on 12/7/15.
  */
-public class TwitterUser extends Model {
+public class TwitterUser extends Model implements Serializable {
     public long id;
 
     public String screenName;
