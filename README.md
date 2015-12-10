@@ -25,4 +25,4 @@ Simple Android Twitter Client for codepath class
 
 ## Video Walkthrough
 
-![video walkthrough gif]()
+![video walkthrough gif](https://cloud.githubusercontent.com/assets/983861/11707259/c46cb276-9eb6-11e5-9e6d-2d1f74356770.gif)
