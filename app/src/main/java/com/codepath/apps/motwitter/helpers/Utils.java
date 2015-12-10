@@ -4,8 +4,14 @@ import android.content.Context;
 import android.text.format.DateUtils;
 import android.widget.Toast;
 
+import com.codepath.apps.motwitter.models.Tweet;
+
+import org.json.JSONArray;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**

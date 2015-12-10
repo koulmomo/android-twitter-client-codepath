@@ -4,22 +4,45 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by koulmomo on 12/7/15.
  */
-@Table(name = "users")
 public class TwitterUser extends Model {
-    long id;
+    public long id;
 
-    String screenName;
+    public String screenName;
 
-    String name;
+    public String name;
 
-    String profileImageUrl;
+    public String profileImageUrl;
 
-    boolean followRequestSent;
+    public boolean followRequestSent;
 
-    boolean following;
+    public boolean following;
 
-    boolean verified;
+    public boolean verified;
+
+    public final static char AT_CHAR = '@';
+
+    public TwitterUser(JSONObject json) {
+        try {
+            id = json.getLong("id");
+            name = json.getString("name");
+            screenName = json.getString("screen_name");
+            profileImageUrl = json.getString("profile_image_url");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static TwitterUser fromJson(JSONObject json) {
+        return new TwitterUser(json);
+    }
+
+    public String getScreenNameForDisplay() {
+        return AT_CHAR + screenName;
+    }
 }
